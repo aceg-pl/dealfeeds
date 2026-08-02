@@ -14,6 +14,11 @@ items = []
 
 for cc, url in feeds.items():
     feed = feedparser.parse(url)
+    print("Country:", cc)
+    print("Entries:", len(feed.entries))
+    print("Bozo:", feed.bozo)
+    if feed.bozo:
+        print(feed.bozo_exception)
 
     for e in feed.entries:
         img = ""
