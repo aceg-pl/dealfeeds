@@ -20,7 +20,7 @@ jobs:
         with:
           python-version: "3.12"
 
-      - run: pip install feedparser
+      - run: pip install feedparser beautifulsoup4
 
       - run: python fetch.py
 
