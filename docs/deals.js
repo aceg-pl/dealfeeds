@@ -5,6 +5,18 @@
 
 const FEED="https://aceg-pl.github.io/dealfeeds/feed.json";
 
+const FLAGS={
+ ALL:"🌍",
+ PL:"🇵🇱",
+ DE:"🇩🇪",
+ AT:"🇦🇹",
+ FR:"🇫🇷",
+ ES:"🇪🇸"
+};
+
+let deals=[];
+let filter=new Set(["ALL"]);
+
 if(window.__dealOverlay){
   window.__dealOverlay.remove();
   delete window.__dealOverlay;
@@ -25,7 +37,10 @@ close.onclick=()=>o.remove();
 const grid=d.createElement("div");
 grid.style.cssText="display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:6px";
 
-o.append(close,grid);
+const bar=d.createElement("div");
+bar.style.cssText="position:sticky;top:-12px;background:#111;padding:8px;display:flex;gap:6px;flex-wrap:wrap;z-index:10;border-bottom:1px solid #333";
+
+o.append(close,bar,grid);
 d.body.appendChild(o);
 window.__dealOverlay=o;
 
@@ -49,11 +64,48 @@ function zoom(src){
  d.body.appendChild(b);
 }
 
-fetch(FEED)
-.then(r=>r.json())
-.then(a=>{
- a.sort((x,y)=>new Date(y.time)-new Date(x.time));
- a.forEach(v=>{
+function render(){
+
+ grid.innerHTML="";
+ bar.innerHTML="";
+
+ let cnt={ALL:deals.length};
+
+ deals.forEach(x=>cnt[x.cc]=(cnt[x.cc]||0)+1);
+
+ Object.keys(FLAGS).forEach(k=>{
+
+   let b=d.createElement("button");
+
+   b.textContent=FLAGS[k]+(cnt[k]||"");
+
+   b.style.cssText=
+   "font-size:22px;padding:2px 8px;border:none;border-radius:5px;cursor:pointer;background:"+
+   (filter.has(k)?"#0a84ff":"#333")+
+   ";color:#fff";
+
+   b.onclick=()=>{
+
+      if(k=="ALL"){
+         filter=new Set(["ALL"]);
+      }else{
+         filter.delete("ALL");
+         filter.has(k)?filter.delete(k):filter.add(k);
+         if(filter.size==0)filter.add("ALL");
+      }
+
+      render();
+
+   };
+
+   bar.appendChild(b);
+
+ });
+
+ deals
+ .filter(x=>filter.has("ALL")||filter.has(x.cc))
+ .forEach(v=>{
+
    let c=d.createElement("div");
    c.style.cssText="display:flex;background:#222;border:1px solid #444;border-radius:4px;padding:6px;height:82px";
 
@@ -75,22 +127,45 @@ fetch(FEED)
    meta.style.cssText="margin-top:auto;display:flex;gap:6px;align-items:center;flex-wrap:wrap";
 
    let cc=d.createElement("span");
-   cc.textContent=v.cc;
-   cc.style.cssText="background:#555;padding:2px 5px;border-radius:3px;font-weight:bold";
+   cc.textContent=FLAGS[v.cc];
+   cc.style.cssText="font-size:18px";
 
    let tm=d.createElement("span");
    tm.textContent=age(v.time);
    tm.style.color="#ccc";
 
    meta.append(cc,tm);
+
    t.append(a1,meta);
 
    c.append(img,t);
+
    grid.appendChild(c);
+
  });
+
+}
+
+   
+fetch(FEED)
+.then(r=>r.json())
+.then(a=>{
+
+ deals=a.sort((x,y)=>new Date(y.time)-new Date(x.time));
+
+ render();
+
 })
 .catch(e=>{
- grid.textContent="Error: "+e;
-});
 
+ grid.innerHTML="";
+
+ let x=d.createElement("div");
+ x.style.cssText="padding:20px;color:#f66;font-size:16px";
+ x.textContent="Error loading feed: "+e;
+
+ grid.appendChild(x);
+
+});
+   
 })();
