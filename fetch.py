@@ -1,3 +1,5 @@
+from bs4 import BeautifulSoup
+import re
 import os
 import json
 import feedparser
@@ -20,6 +22,15 @@ for cc,url in feeds.items():
     print(cc,len(feed.entries))
 
     for e in feed.entries:
+        
+        html=e.get("description","")
+txt=BeautifulSoup(html,"html.parser").get_text(" ",strip=True)
+store=""
+
+m=re.search(r"(Amazon|Media\s?Markt|MediaMarkt|W\.KRUK|Ceneo|Allegro)",txt,re.I)
+
+if m:
+    store=m.group(1)
 
         img=""
 
@@ -34,6 +45,7 @@ for cc,url in feeds.items():
             ts=0
 
         items.append({
+            "store":store,
             "cc":cc,
             "title":e.title,
             "link":e.link,
