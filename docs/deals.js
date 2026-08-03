@@ -16,6 +16,7 @@ const FLAGS={
 
 let deals=[];
 let filter=new Set(["ALL"]);
+let storeFilter="ALL";
 
 if(window.__dealOverlay){
   window.__dealOverlay.remove();
@@ -40,7 +41,10 @@ grid.style.cssText="display:grid;grid-template-columns:repeat(auto-fill,minmax(2
 const bar=d.createElement("div");
 bar.style.cssText="position:sticky;top:-12px;background:#111;padding:8px;display:flex;gap:6px;flex-wrap:wrap;z-index:10;border-bottom:1px solid #333";
 
-o.append(close,bar,grid);
+const stores=d.createElement("div");
+stores.style.cssText="padding:4px 8px;display:flex;gap:4px;flex-wrap:wrap;background:#181818;border-bottom:1px solid #333";
+
+o.append(close,bar,stores,grid);
 d.body.appendChild(o);
 window.__dealOverlay=o;
 
@@ -68,8 +72,15 @@ function render(){
 
  grid.innerHTML="";
  bar.innerHTML="";
+ stores.innerHTML="";
 
  let cnt={ALL:deals.length};
+ let scnt={};
+
+deals.forEach(x=>{
+ if(x.store)
+   scnt[x.store]=(scnt[x.store]||0)+1;
+});
 
  deals.forEach(x=>cnt[x.cc]=(cnt[x.cc]||0)+1);
 
@@ -99,11 +110,48 @@ function render(){
    };
 
    bar.appendChild(b);
-
  });
 
+    let all=d.createElement("button");
+all.textContent="Stores";
+all.style.cssText="background:"+(storeFilter=="ALL"?"#0a84ff":"#333")+";color:#fff;border:none;border-radius:4px;padding:2px 8px";
+all.onclick=()=>{
+ storeFilter="ALL";
+ render();
+};
+stores.appendChild(all);
+
+Object.keys(scnt)
+.sort((a,b)=>scnt[b]-scnt[a])
+.forEach(s=>{
+
+ let b=d.createElement("button");
+
+ b.textContent=s+" "+scnt[s];
+
+ b.style.cssText=
+ "background:"+(storeFilter==s?"#0a84ff":"#333")+
+ ";color:#fff;border:none;border-radius:4px;padding:2px 8px;font-size:11px;cursor:pointer";
+
+ b.onclick=()=>{
+   storeFilter=s;
+   render();
+ };
+
+ stores.appendChild(b);
+
+});
+
  deals
- .filter(x=>filter.has("ALL")||filter.has(x.cc))
+ .filter(x=>
+
+(filter.has("ALL")||filter.has(x.cc))
+
+&&
+
+(storeFilter=="ALL"||x.store==storeFilter)
+
+)
  .forEach(v=>{
 
    let c=d.createElement("div");
