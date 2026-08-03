@@ -120,7 +120,7 @@ function render(){
    let a1=d.createElement("a");
    a1.href=v.link;
    a1.target="_blank";
-   a1.textContent=v.title;
+   a1.textContent=(v.store||"NO STORE")+" | "+v.title;
    a1.style.cssText="color:#5bf;text-decoration:none;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical";
 
    let meta=d.createElement("div");
