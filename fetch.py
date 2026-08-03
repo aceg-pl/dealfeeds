@@ -21,16 +21,17 @@ for cc,url in feeds.items():
     feed=feedparser.parse(url)
     print(cc,len(feed.entries))
 
-    for e in feed.entries:
-        
+        for e in feed.entries:
+
         html=e.get("description","")
-txt=BeautifulSoup(html,"html.parser").get_text(" ",strip=True)
-store=""
+        txt=BeautifulSoup(html,"html.parser").get_text(" ",strip=True)
 
-m=re.search(r"(Amazon|Media\s?Markt|MediaMarkt|W\.KRUK|Ceneo|Allegro)",txt,re.I)
+        store=""
 
-if m:
-    store=m.group(1)
+        m=re.search(r"(Amazon|Media\s?Markt|MediaMarkt|W\.KRUK|Ceneo|Allegro)",txt,re.I)
+
+        if m:
+            store=m.group(1)
 
         img=""
 
