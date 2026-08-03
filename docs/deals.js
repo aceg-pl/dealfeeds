@@ -99,15 +99,26 @@ deals
 
    b.onclick=()=>{
 
-      if(k=="ALL"){
-         filter=new Set(["ALL"]);
-      }else{
-         filter.delete("ALL");
-         filter.has(k)?filter.delete(k):filter.add(k);
-         if(filter.size==0)filter.add("ALL");
-      }
+   if(k=="ALL"){
+      filter=new Set(["ALL"]);
+   }else{
+      filter.delete("ALL");
+      filter.has(k)?filter.delete(k):filter.add(k);
+      if(filter.size==0)filter.add("ALL");
+   }
 
-      render();
+   // Reset merchant if it no longer exists
+   if(storeFilter!="ALL"){
+      let ok=deals.some(x=>
+         (filter.has("ALL")||filter.has(x.cc)) &&
+         x.store==storeFilter
+      );
+      if(!ok) storeFilter="ALL";
+   }
+
+   render();
+
+};
 
    };
 
@@ -136,9 +147,9 @@ Object.keys(scnt)
  ";color:#fff;border:none;border-radius:4px;padding:2px 8px;font-size:11px;cursor:pointer";
 
  b.onclick=()=>{
-   storeFilter=s;
+   storeFilter=(storeFilter==s?"ALL":s);
    render();
- };
+};
 
  stores.appendChild(b);
 
