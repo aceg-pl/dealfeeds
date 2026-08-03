@@ -77,7 +77,9 @@ function render(){
  let cnt={ALL:deals.length};
  let scnt={};
 
-deals.forEach(x=>{
+deals
+.filter(x=>filter.has("ALL")||filter.has(x.cc))
+.forEach(x=>{
  if(x.store)
    scnt[x.store]=(scnt[x.store]||0)+1;
 });
@@ -113,7 +115,7 @@ deals.forEach(x=>{
  });
 
     let all=d.createElement("button");
-all.textContent="Stores";
+all.textContent="🏪 All";
 all.style.cssText="background:"+(storeFilter=="ALL"?"#0a84ff":"#333")+";color:#fff;border:none;border-radius:4px;padding:2px 8px";
 all.onclick=()=>{
  storeFilter="ALL";
@@ -168,7 +170,7 @@ Object.keys(scnt)
    let a1=d.createElement("a");
    a1.href=v.link;
    a1.target="_blank";
-   a1.textContent=(v.store||"NO STORE")+" | "+v.title;
+   a1.textContent=v.title;
    a1.style.cssText="color:#5bf;text-decoration:none;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical";
 
    let meta=d.createElement("div");
