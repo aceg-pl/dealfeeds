@@ -124,19 +124,26 @@ function render(){
    a1.style.cssText="color:#5bf;text-decoration:none;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical";
 
    let meta=d.createElement("div");
-   meta.style.cssText="margin-top:auto;display:flex;gap:6px;align-items:center;flex-wrap:wrap";
+meta.style.cssText="margin-top:auto;display:flex;gap:6px;align-items:center;flex-wrap:wrap";
 
-   let cc=d.createElement("span");
-   cc.textContent=FLAGS[v.cc];
-   cc.style.cssText="font-size:18px";
+if(v.store){
+    let st=d.createElement("span");
+    st.textContent=v.store;
+    st.style.cssText="color:#9cf;font-size:11px;font-weight:bold";
+    meta.appendChild(st);
+}
 
-   let tm=d.createElement("span");
-   tm.textContent=age(v.time);
-   tm.style.color="#ccc";
+let cc=d.createElement("span");
+cc.textContent=FLAGS[v.cc];
+cc.style.cssText="font-size:18px";
 
-   meta.append(cc,tm);
+let tm=d.createElement("span");
+tm.textContent=age(v.time);
+tm.style.color="#ccc";
 
-   t.append(a1,meta);
+meta.append(cc,tm);
+
+t.append(a1,meta);
 
    c.append(img,t);
 
